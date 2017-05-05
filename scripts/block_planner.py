@@ -66,8 +66,8 @@ from baxter_core_msgs.srv import (
 from planification_baxter.srv import *
 
 # Because probleme 16 needs 9 blocks
-MAX_BLOCKS = 4
-MAX_PROBLEM = 3
+MAX_BLOCKS = 8
+MAX_PROBLEM = 50
 
 class Solver():
     def selection(self, problemId):
@@ -116,7 +116,7 @@ class BlocksWorld():
         self._blockSlotPosition = list()
         for i in range(MAX_BLOCKS):
             self._blockSlotPosition.append(Pose(
-                position=Point(self._x_base + 0.1 * (i // len(self._color)), self._y_base + 0.1 * (i % len(self._color)),
+                position=Point(self._x_base + 0.1 * (i // 4), self._y_base + 0.1 * (i % 4),
                                self._z_base), orientation=Quaternion(0, 0, 0, 1)))
         self._blockSlot = list()
         # An orientation for gripper fingers to be overhead and parallel to the obj
@@ -144,11 +144,7 @@ class BlocksWorld():
         return self._blockSlotPosition[slot]
 
     def getNbSlot(self, slot):
-        print("getNbSlot"),
-        #print(self._blockSlot[slot])
-        print("BEFOREBUG")
-        #return len(self._blockSlot[slot])
-        return 1
+        return len(self._blockSlot[slot])
 
     def updatePickSlot(self, slot):
         print("BLOCKSLOT = "),
@@ -175,7 +171,7 @@ class BlocksWorld():
         table_pose = Pose(position=Point(x=1.0, y=0.0, z=0.0))
         table_reference_frame = block_reference_frame = "world"
         # Get Models' Path
-        model_path = rospkg.RosPack().get_path('planification_baxter') + "/models/"
+        model_path = rospkg.RosPack().get_path('baxter_block_planner') + "/models/"
         # Load Table SDF
         table_xml = ''
         with open(model_path + "cafe_table/model.sdf", "r") as table_file:

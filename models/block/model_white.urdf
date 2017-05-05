@@ -2,8 +2,8 @@
   <link name="block">
     <inertial>
       <origin xyz="0.02 0.02 0.02" />
-      <mass value="2.0" />
-      <inertia  ixx="2.0" ixy="0.0"  ixz="0.0"  iyy="2.0"  iyz="0.0"  izz="2.0" />
+      <mass value="0.5" />
+      <inertia  ixx="0.00005" ixy="0.0"  ixz="0.0"  iyy="0.00005"  iyz="0.0"  izz="0.00005" />
     </inertial>
     <visual>
       <origin xyz="0.02 0.02 0.02"/>
