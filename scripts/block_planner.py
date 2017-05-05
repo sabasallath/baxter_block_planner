@@ -130,23 +130,41 @@ class BlocksWorld():
 
     def gen_blocks(self):
         self.load_gazebo_models_nb(self._nbBlocks, self._color)
-        for pose in self._blockSlotPosition:
-            self._blockSlot.append((pose, 1))
+        for i in range(self._nbBlocks):
+            self._blockSlot.append([i])
+        print("BLOCKSLOT = "),
+        print(self._blockSlot)
 
     def del_blocks(self):
         self.delete_gazebo_models_nb(self._nbBlocks, self._color)
         self._nbBlocks = 0
+        self._blockSlot = list()
 
-    def getPoseSlot(self, nBlockSlot):
-        pos, nb = self._blockSlot[nBlockSlot]
-        return pos
+    def getPoseSlot(self, slot):
+        return self._blockSlotPosition[slot]
 
-    def getNbSlot(self, nBlockSlot):
-        pos, nb = self._blockSlot[nBlockSlot]
-        return nb
+    def getNbSlot(self, slot):
+        print("getNbSlot"),
+        #print(self._blockSlot[slot])
+        print("BEFOREBUG")
+        #return len(self._blockSlot[slot])
+        return 1
 
-    def updateSlot(self, slot, getPoseSlot, getNbSlot):
-        self._blockSlot[slot] = getPoseSlot, getNbSlot
+    def updatePickSlot(self, slot):
+        print("BLOCKSLOT = "),
+        print(self._blockSlot)
+        return self._blockSlot[slot].pop()
+
+    def updatePlaceSlot(self, slot, element):
+        print("BLOCKSLOT = "),
+        print(self._blockSlot)
+        self._blockSlot[slot].append(element)
+
+    def search(self, element):
+        for i in range(len(self._blockSlot)):
+            if self._blockSlot[i][-1] == element:
+                return i
+        return -1
 
     def load_gazebo_models_nb(self, nbBlock, color):
         table_pose = Pose(position=Point(x=1.0, y=0.0, z=0.0))
@@ -397,13 +415,26 @@ def main():
 
 def solve(blocksWorld, problemId, robot, solver):
     actionList = solver.selection(problemId)
+    carriedElement = False
     for action in actionList:
         actionType, param = action
-        slot = ord(param) - 97
+        element = ord(param) - 97
         if (actionType == 'pick-up'):
-            pickSlot(blocksWorld, robot, slot)
+            slot = blocksWorld.search(element)
+            if slot == -1:
+                print(param + "not found in pick action")
+            carriedElement = pickSlot(blocksWorld, robot, slot)
+            blocksWorld.updatePickSlot(slot)
         elif (actionType == 'stack'):
+            slot = blocksWorld.search(element)
+            if slot == -1:
+                print(param + "not found in place action")
             placeSlot(blocksWorld, robot, slot)
+            if carriedElement != False:
+                blocksWorld.updatePlaceSlot(slot, carriedElement)
+                carriedElement = False
+            else:
+                print("/!\ Incoherent world")
 
 
 def guard_input(max, strN="n"):
@@ -417,23 +448,24 @@ def guard_input(max, strN="n"):
     return n
 
 def placeSlot(blocksWorld, robot, slot):
+    print("SLOT NB = " + str(slot))
     pose = blocksWorld.getPoseSlot(slot)
     x_dec = blocksWorld._x_dec
     y_dec = blocksWorld._y_dec
     z_dec = blocksWorld._z_dec + (blocksWorld.getNbSlot(slot)) * 0.04 + 0.04
     robot.place(Pose(position=Point(pose.position.x + x_dec, pose.position.y + y_dec, z_dec),
                      orientation=Quaternion(0, 1, 0, 0)))
-    blocksWorld.updateSlot(slot, blocksWorld.getPoseSlot(slot), blocksWorld.getNbSlot(slot) + 1)
+
 
 
 def pickSlot(blocksWorld, robot, slot):
+    print("SLOT NB = " + str(slot))
     pose = blocksWorld.getPoseSlot(slot)
     x_dec = blocksWorld._x_dec
     y_dec = blocksWorld._y_dec
     z_dec = blocksWorld._z_dec + (blocksWorld.getNbSlot(slot) - 1) * 0.04
     robot.pick(Pose(position=Point(pose.position.x + x_dec, pose.position.y + y_dec, z_dec),
                     orientation=Quaternion(0, 1, 0, 0)))
-    blocksWorld.updateSlot(slot, blocksWorld.getPoseSlot(slot), blocksWorld.getNbSlot(slot) - 1)
 
 
 if __name__ == '__main__':
