@@ -162,8 +162,13 @@ class BlocksWorld():
 
     def search(self, element):
         for i in range(len(self._blockSlot)):
-            if self._blockSlot[i][-1] == element:
-                return i
+            print("SEARCH :"),
+            print(i)
+            print("STATE :"),
+            print(self._blockSlot)
+            if (len(self._blockSlot[i]) != 0):
+                if self._blockSlot[i][-1] == element:
+                    return i
         return -1
 
     def load_gazebo_models_nb(self, nbBlock, color):
@@ -376,6 +381,7 @@ def main():
     robot = Robot('left', hover_distance=0.15)
     blocksWorld = BlocksWorld(nbBlocks=0)
     solver = Solver()
+    robot.move_to_start()
 
     while True:
         print("-----------------------------------------")
@@ -398,7 +404,6 @@ def main():
             blocksWorld = BlocksWorld(n)
             blocksWorld.gen_blocks()
         elif (com == "d"):
-            robot.move_to_start()
             blocksWorld.del_blocks()
         elif (com == "i"):
             slot = guard_input(MAX_BLOCKS, "slot")
@@ -423,18 +428,21 @@ def solve(blocksWorld, problemId, robot, solver):
             slot = blocksWorld.search(element)
             if slot == -1:
                 print(param + "not found in pick action")
-            carriedElement = pickSlot(blocksWorld, robot, slot)
-            blocksWorld.updatePickSlot(slot)
+            else:
+                carriedElement = element
+                pickSlot(blocksWorld, robot, slot)
+                blocksWorld.updatePickSlot(slot)
         elif (actionType == 'stack'):
             slot = blocksWorld.search(element)
             if slot == -1:
                 print(param + "not found in place action")
-            placeSlot(blocksWorld, robot, slot)
-            if carriedElement != False:
-                blocksWorld.updatePlaceSlot(slot, carriedElement)
-                carriedElement = False
             else:
-                print("/!\ Incoherent world")
+                placeSlot(blocksWorld, robot, slot)
+                if carriedElement != False:
+                    blocksWorld.updatePlaceSlot(slot, carriedElement)
+                    carriedElement = False
+                else:
+                    print("/!\ Incoherent world")
 
 
 def guard_input(max, strN="n"):
@@ -448,7 +456,7 @@ def guard_input(max, strN="n"):
     return n
 
 def placeSlot(blocksWorld, robot, slot):
-    print("SLOT NB = " + str(slot))
+    print("PLACE SLOT : " + str(slot))
     pose = blocksWorld.getPoseSlot(slot)
     x_dec = blocksWorld._x_dec
     y_dec = blocksWorld._y_dec
@@ -459,7 +467,7 @@ def placeSlot(blocksWorld, robot, slot):
 
 
 def pickSlot(blocksWorld, robot, slot):
-    print("SLOT NB = " + str(slot))
+    print("PICK SLOT : " + str(slot))
     pose = blocksWorld.getPoseSlot(slot)
     x_dec = blocksWorld._x_dec
     y_dec = blocksWorld._y_dec
