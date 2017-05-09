@@ -9,17 +9,15 @@ Ros - Gazebo - Baxter blocks problem solving
 
 ## pre-requisite : java 8
 
-- Follow instruction at :
-http://ubuntuhandbook.org/index.php/2015/01/install-openjdk-8-ubuntu-14-04-12-04-lts/
+- Follow instruction at : http://ubuntuhandbook.org/index.php/2015/01/install-openjdk-8-ubuntu-14-04-12-04-lts/
 
 ## pre-requisite : move-it
 
-- Follow instruction at :
-http://sdk.rethinkrobotics.com/wiki/MoveIt_Tutorial
+- Follow instruction at : http://sdk.rethinkrobotics.com/wiki/MoveIt_Tutorial
 
-**/!\ REBOOT after MoveIt installation**
+    **/!\ REBOOT after MoveIt installation**
 
-If still in trouble :
+    If still in trouble :
 
     ```
     cd ~/ros_ws/
@@ -30,7 +28,7 @@ If still in trouble :
     ```
     
     
-## Baxter block package installation
+# Baxter block package installation
 
 - Clone sabasallath/baxter_block_planner.git in ~/ros_ws/src/
 
