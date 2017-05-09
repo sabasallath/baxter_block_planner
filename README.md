@@ -21,13 +21,14 @@ http://sdk.rethinkrobotics.com/wiki/MoveIt_Tutorial
 
 If still in trouble :
 
-```
-cd ~/ros_ws/
-rm -rf build/
-rm -rf devel/
-catkin_make
-catkin_make install
-```
+    ```
+    cd ~/ros_ws/
+    rm -rf build/
+    rm -rf devel/
+    catkin_make
+    catkin_make install
+    ```
+    
     
 ## Baxter block package installation
 
