@@ -26,9 +26,8 @@ Ros - Gazebo - Baxter blocks problem solving
     catkin_make
     catkin_make install
     ```
-    
-    
-# Baxter block package installation
+
+# Baxter block package installation
 
 - Clone sabasallath/baxter_block_planner.git in ~/ros_ws/src/
 
